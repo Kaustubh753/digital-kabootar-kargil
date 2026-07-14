@@ -21,6 +21,42 @@ only works on your own machine.
 
 ---
 
+## Public URL — Recommended: Fly.io (persistent data)
+
+Fly runs the app in a container with a **persistent volume**, so submitted
+letters survive restarts. You run these on your own machine (one-time setup);
+they don't require Docker locally — Fly builds remotely.
+
+```bash
+# 1. Install the Fly CLI (macOS)
+brew install flyctl            # or: curl -L https://fly.io/install.sh | sh
+
+# 2. Sign up / log in (opens the browser)
+fly auth signup               # or: fly auth login
+
+# 3. From the repo folder, launch using the committed fly.toml + Dockerfile
+git clone https://github.com/Kaustubh753/digital-kabootar-kargil.git
+cd digital-kabootar-kargil
+fly launch                    # accept the existing config; pick a unique app name
+                              # say YES when it offers to create the volume,
+                              # or run: fly volumes create kabootar_data -r bom -n 1 -s 1
+
+# 4. Set the admin password + session secret (kept out of the repo)
+fly secrets set ADMIN_PASSWORD='choose-a-strong-password' \
+                SESSION_SECRET="$(openssl rand -hex 32)"
+
+# 5. Deploy
+fly deploy
+```
+
+When it finishes, `fly open` opens your live URL —
+**`https://<your-app-name>.fly.dev`**. Log into `/admin` with the
+`ADMIN_PASSWORD` you set in step 4.
+
+> Region is `bom` (Mumbai) in `fly.toml`; change `primary_region` to your
+> nearest [Fly region](https://fly.io/docs/reference/regions/) if you prefer.
+> The `[[vm]]` block uses a small 512 MB machine — bump `memory_mb` if needed.
+
 ## Public URL — Option A: Render (free, all in the browser)
 
 Best if you just want a shareable link fast. (Free tier sleeps after ~15 min

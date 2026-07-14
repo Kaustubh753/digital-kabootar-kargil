@@ -1,0 +1,36 @@
+# Fly.io configuration. See DEPLOY.md for the full walkthrough.
+# Deploy with:  fly launch   (uses this file + the Dockerfile)
+#
+# `app` must be globally unique — fly launch will offer to rename if it's taken.
+app = "digital-kabootar-kargil"
+primary_region = "bom"   # Mumbai. Change to your nearest Fly region if you like.
+
+[build]
+
+[env]
+  PORT = "3000"
+  # SQLite database path — points at the mounted volume so letters persist.
+  DATABASE_PATH = "/data/kabootar.db"
+  # "true" holds every letter for human review; "false" auto-approves clean ones.
+  REQUIRE_HUMAN_REVIEW = "false"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+# Persistent volume for the SQLite database (survives restarts/redeploys).
+[[mounts]]
+  source = "kabootar_data"
+  destination = "/data"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
+
+# NOTE: ADMIN_PASSWORD and SESSION_SECRET are NOT stored here (they are secrets).
+# Set them once with:
+#   fly secrets set ADMIN_PASSWORD='your-strong-password' SESSION_SECRET="$(openssl rand -hex 32)"

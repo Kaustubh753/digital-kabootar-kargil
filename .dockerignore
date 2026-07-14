@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.gitignore
+*.log
+npm-debug.log*
+# never bake local databases or secrets into the image
+data/*.db
+data/*.db-*
+.env
+.env*.local
+# docs not needed in the image
+README.md
+DEPLOY.md
