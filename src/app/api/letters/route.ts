@@ -90,6 +90,10 @@ export async function POST(req: NextRequest) {
       message: data.message,
       martyr_id: data.martyr_id,
       writer_state: data.writer_state ?? null,
+      consent: data.consent === true,
+      // Guardian consent only applies (and is required) for under-18s.
+      guardian_consent:
+        data.age != null && data.age < 18 ? data.guardian_consent === true : null,
     },
     status,
     decision.categories,

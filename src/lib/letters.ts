@@ -80,6 +80,10 @@ export interface CreateLetterInput {
   message: string;
   martyr_id: string;
   writer_state?: string | null;
+  /** Veer Vandan submission consent (required to submit). */
+  consent?: boolean;
+  /** Guardian consent — null when not applicable (participant is 18+). */
+  guardian_consent?: boolean | null;
 }
 
 /**
@@ -102,8 +106,9 @@ export function createLetter(
     `INSERT INTO letters
        (id, writer_name, organization_name, age, email, message, martyr_id,
         writer_state, moderation_status, moderation_categories,
-        moderated_by, moderated_at, created_at, ip_hash)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        moderated_by, moderated_at, created_at, ip_hash,
+        consent_given, guardian_consent)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     id,
     input.writer_name,
@@ -119,6 +124,8 @@ export function createLetter(
     autoApproved ? now : null,
     now,
     ipHash,
+    input.consent ? 1 : 0,
+    input.guardian_consent == null ? null : input.guardian_consent ? 1 : 0,
   );
   return getLetter(db, id)!;
 }

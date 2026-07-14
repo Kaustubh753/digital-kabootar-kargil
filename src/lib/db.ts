@@ -56,7 +56,11 @@ CREATE TABLE IF NOT EXISTS letters (
   moderated_by          TEXT,
   moderated_at          TEXT,
   created_at            TEXT NOT NULL,
-  ip_hash               TEXT
+  ip_hash               TEXT,
+  -- Veer Vandan consent (source doc §2.2 / §2.4). consent_given is mandatory to
+  -- submit; guardian_consent is NULL unless the participant is under 18.
+  consent_given         INTEGER NOT NULL DEFAULT 0,
+  guardian_consent      INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS idx_letters_status_created
@@ -76,7 +80,29 @@ export function openDb(path: string): DB {
   db.exec("PRAGMA journal_mode = WAL;");
   db.exec("PRAGMA foreign_keys = ON;");
   db.exec(SCHEMA);
+  migrate(db);
   return db;
+}
+
+/**
+ * Idempotent, additive migrations for databases created before a column
+ * existed. `CREATE TABLE IF NOT EXISTS` won't add columns to an existing table,
+ * so we add any missing ones here.
+ */
+function migrate(db: DB): void {
+  const cols = new Set(
+    (db.prepare("PRAGMA table_info(letters)").all() as { name: string }[]).map(
+      (c) => c.name,
+    ),
+  );
+  if (!cols.has("consent_given")) {
+    db.exec(
+      "ALTER TABLE letters ADD COLUMN consent_given INTEGER NOT NULL DEFAULT 0",
+    );
+  }
+  if (!cols.has("guardian_consent")) {
+    db.exec("ALTER TABLE letters ADD COLUMN guardian_consent INTEGER");
+  }
 }
 
 /**

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useI18n } from "@/components/LanguageProvider";
 import { LiveCounter } from "@/components/LiveCounter";
 import { Gallery } from "@/components/Gallery";
+import { FeaturedMessages } from "@/components/FeaturedMessages";
 
 export default function HomePage() {
   const { t } = useI18n();
@@ -27,6 +28,8 @@ export default function HomePage() {
           <LiveCounter />
         </div>
       </section>
+
+      <FeaturedMessages />
 
       <section className="section">
         <div className="row-between">

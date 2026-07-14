@@ -11,6 +11,7 @@ function valid(over: Record<string, unknown> = {}) {
     organization_name: "Community Group",
     message: "Thank you for your service.",
     martyr_id: "m1",
+    consent: true,
     ...over,
   };
 }
@@ -69,6 +70,32 @@ describe("letterSubmissionSchema", () => {
     expect(r.success && r.data.age).toBe(34);
     expect(letterSubmissionSchema.safeParse(valid({ age: "999" })).success).toBe(
       false,
+    );
+  });
+
+  it("requires submission consent (Veer Vandan §2.2)", () => {
+    expect(letterSubmissionSchema.safeParse(valid({ consent: false })).success).toBe(
+      false,
+    );
+    expect(
+      letterSubmissionSchema.safeParse({ ...valid(), consent: undefined }).success,
+    ).toBe(false);
+    expect(letterSubmissionSchema.safeParse(valid()).success).toBe(true);
+  });
+
+  it("requires guardian consent when under 18 (Veer Vandan §2.4)", () => {
+    // under 18 without guardian consent → rejected
+    expect(letterSubmissionSchema.safeParse(valid({ age: "15" })).success).toBe(
+      false,
+    );
+    // under 18 with guardian consent → accepted
+    expect(
+      letterSubmissionSchema.safeParse(valid({ age: "15", guardian_consent: true }))
+        .success,
+    ).toBe(true);
+    // 18+ needs no guardian consent
+    expect(letterSubmissionSchema.safeParse(valid({ age: "22" })).success).toBe(
+      true,
     );
   });
 

@@ -16,7 +16,7 @@ const optionalTrimmed = (max: number) =>
 
 export const MESSAGE_MAX = 500;
 
-export const letterSubmissionSchema = z.object({
+const baseLetterSchema = z.object({
   writer_name: z.string().trim().min(1, "Your name is required").max(100),
   organization_name: z
     .string()
@@ -42,7 +42,32 @@ export const letterSubmissionSchema = z.object({
     .max(MESSAGE_MAX, `Message must be ${MESSAGE_MAX} characters or fewer`),
   martyr_id: z.string().trim().min(1, "Please choose a martyr to write to"),
   writer_state: optionalTrimmed(60),
+  /**
+   * Veer Vandan consent (source doc §2.2 / §2.4). Submission consent is always
+   * required; guardian consent is required when the participant is under 18.
+   */
+  consent: z.boolean().optional(),
+  guardian_consent: z.boolean().optional(),
 });
+
+export const letterSubmissionSchema = baseLetterSchema.superRefine(
+  (data, ctx) => {
+    if (data.consent !== true) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["consent"],
+        message: "Please confirm the consent statement to submit your letter.",
+      });
+    }
+    if (data.age != null && data.age < 18 && data.guardian_consent !== true) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["guardian_consent"],
+        message: "Guardian consent is required for participants under 18.",
+      });
+    }
+  },
+);
 
 export type LetterSubmission = z.infer<typeof letterSubmissionSchema>;
 

@@ -13,6 +13,11 @@ import {
 import { useI18n } from "./LanguageProvider";
 import { fetchJson } from "./api";
 import { SendAnimation } from "./SendAnimation";
+import {
+  SUBMISSION_CONSENT,
+  GUARDIAN_CONSENT,
+  DATA_USE_NOTICE,
+} from "@/lib/campaign";
 
 interface SubmitResult {
   id: string | null;
@@ -34,6 +39,8 @@ export function LetterForm({ martyr }: { martyr: Martyr }) {
     message: "",
   });
   const [honeypot, setHoneypot] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [guardianConsent, setGuardianConsent] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [phase, setPhase] = useState<"form" | "sending" | "done">("form");
@@ -43,6 +50,10 @@ export function LetterForm({ martyr }: { martyr: Martyr }) {
     setFields((f) => ({ ...f, [k]: v }));
 
   const remaining = MESSAGE_MAX - fields.message.length;
+
+  const ageNum = fields.age ? Number(fields.age) : NaN;
+  const isMinor = Number.isFinite(ageNum) && ageNum < 18;
+  const consentOk = consent && (!isMinor || guardianConsent);
 
   // Client-side advisory check — instant warning, server stays authoritative.
   const advisory = useMemo(() => {
@@ -60,6 +71,8 @@ export function LetterForm({ martyr }: { martyr: Martyr }) {
     const payload = {
       ...fields,
       martyr_id: martyr.id,
+      consent,
+      guardian_consent: isMinor ? guardianConsent : undefined,
     };
     const parsed = letterSubmissionSchema.safeParse(payload);
     if (!parsed.success) {
@@ -107,6 +120,8 @@ export function LetterForm({ martyr }: { martyr: Martyr }) {
       message: "",
     });
     setHoneypot("");
+    setConsent(false);
+    setGuardianConsent(false);
     setResult(null);
     setErrors({});
     setSubmitError(null);
@@ -265,6 +280,35 @@ export function LetterForm({ martyr }: { martyr: Martyr }) {
         />
       </div>
 
+      {/* Consent — Veer Vandan §2.2 (required) and §2.4 (guardian, under 18). */}
+      <div className="field" style={{ marginTop: 8 }}>
+        <label className="consent-row">
+          <input
+            type="checkbox"
+            checked={consent}
+            onChange={(e) => setConsent(e.target.checked)}
+          />
+          <span>{SUBMISSION_CONSENT}</span>
+        </label>
+        {errors.consent && <div className="field-error">{errors.consent}</div>}
+      </div>
+
+      {isMinor && (
+        <div className="field">
+          <label className="consent-row">
+            <input
+              type="checkbox"
+              checked={guardianConsent}
+              onChange={(e) => setGuardianConsent(e.target.checked)}
+            />
+            <span>{GUARDIAN_CONSENT}</span>
+          </label>
+          {errors.guardian_consent && (
+            <div className="field-error">{errors.guardian_consent}</div>
+          )}
+        </div>
+      )}
+
       {submitError && (
         <div className="notice notice-error" role="alert" style={{ marginBottom: 12 }}>
           {submitError}
@@ -274,10 +318,15 @@ export function LetterForm({ martyr }: { martyr: Martyr }) {
       <button
         type="submit"
         className="btn btn-primary"
-        disabled={phase === "sending"}
+        disabled={phase === "sending" || !consentOk}
       >
         {phase === "sending" ? t("write.sending") : `🕊️ ${t("write.submit")}`}
       </button>
+
+      {/* Data-use line — Veer Vandan §2.5 */}
+      <p className="muted" style={{ fontSize: ".82rem", marginTop: 12 }}>
+        {DATA_USE_NOTICE}
+      </p>
     </form>
   );
 }

@@ -30,6 +30,8 @@ const en: Dict = {
   "home.writeCta": "Write a letter",
   "home.recent": "Recent letters",
   "home.browse": "Browse the Martyr Directory",
+  "home.featuredTitle": "Messages to our heroes",
+  "featured.eyebrow": "To our heroes",
 
   "write.title": "Write a letter",
   "write.chooseMartyr": "Choose a martyr to write to",
@@ -120,6 +122,8 @@ const hi: Dict = {
   "home.writeCta": "पत्र लिखें",
   "home.recent": "हाल के पत्र",
   "home.browse": "शहीद निर्देशिका देखें",
+  "home.featuredTitle": "हमारे वीरों के नाम संदेश",
+  "featured.eyebrow": "हमारे वीरों के नाम",
 
   "write.title": "पत्र लिखें",
   "write.chooseMartyr": "पत्र लिखने के लिए एक शहीद चुनें",
