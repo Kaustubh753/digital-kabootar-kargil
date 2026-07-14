@@ -5,7 +5,7 @@ import { Nav } from "@/components/Nav";
 import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "Digital Kabootar — Letters to the Martyrs of Kargil",
+  title: "Veer Vandan — Letters to the Martyrs of Kargil",
   description:
     "Write a letter of gratitude to a soldier who gave their life in the Kargil War.",
 };

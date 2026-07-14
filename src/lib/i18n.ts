@@ -17,7 +17,7 @@ export const LANGS: { code: Lang; label: string }[] = [
 type Dict = Record<string, string>;
 
 const en: Dict = {
-  "app.name": "Digital Kabootar",
+  "app.name": "Veer Vandan",
   "app.tagline": "Letters of gratitude to the martyrs of Kargil",
 
   "nav.home": "Home",
@@ -109,7 +109,7 @@ const en: Dict = {
 
 // Provisional Hindi. Final copy supplied separately (PRD §5.10).
 const hi: Dict = {
-  "app.name": "डिजिटल कबूतर",
+  "app.name": "वीर वंदन",
   "app.tagline": "करगिल के शहीदों को कृतज्ञता के पत्र",
 
   "nav.home": "मुख्य पृष्ठ",

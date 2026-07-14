@@ -1,4 +1,4 @@
-# Digital Kabootar — Citizen Tribute Letters for Kargil War Martyrs
+# Veer Vandan — Citizen Tribute Letters for Kargil War Martyrs
 
 A platform where citizens write short letters of gratitude addressed to
 individual soldiers who died in the Kargil War. Each letter is submitted as a
@@ -6,7 +6,8 @@ digital postcard and shown in a public gallery **only after it passes
 moderation**. Implements the functional scope of the Citizen Tribute Letters
 PRD v4.0 (martyr‑focused).
 
-> _Kabootar_ (कबूतर) = pigeon — the carrier pigeon that delivers each letter.
+> _Veer Vandan_ (वीर वंदन) = "salute to the brave." The 🕊️ carrier‑pigeon motif
+> represents each letter of gratitude being delivered to a martyr.
 
 ---
 
