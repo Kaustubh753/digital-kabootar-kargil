@@ -6,8 +6,7 @@ digital postcard and shown in a public gallery **only after it passes
 moderation**. Implements the functional scope of the Citizen Tribute Letters
 PRD v4.0 (martyr‑focused).
 
-> _Veer Vandan_ (वीर वंदन) = "salute to the brave." The 🕊️ carrier‑pigeon motif
-> represents each letter of gratitude being delivered to a martyr.
+> _Veer Vandan_ (वीर वंदन) = "salute to the brave."
 
 ---
 
@@ -41,8 +40,8 @@ cp .env.example .env.local     # then edit the secrets
 npm run dev                    # http://localhost:3000
 ```
 
-On first run the DB is created and seeded with **placeholder** martyrs (see
-[Martyr data](#martyr-data-critical) below).
+On first run the DB is created and seeded with the **Kargil Roll of Honour**
+(674 martyrs; see [Martyr data](#martyr-data) below).
 
 ### Environment
 
@@ -63,7 +62,7 @@ npm run dev      # dev server
 npm run build    # production build
 npm start        # production server
 npm test         # run the vitest suite
-npm run seed [file.json]   # (re)seed martyrs; no arg = placeholder sample
+npm run seed [file.json]   # (re)seed martyrs; no arg = Kargil Roll of Honour
 ```
 
 ---
@@ -128,29 +127,28 @@ rate, and **CSV export** (formula‑injection‑safe).
 
 ---
 
-## Martyr data (critical)
+## Martyr data
 
-**The martyrs dataset does not ship real records.** Per PRD §4.2, these are
-real, named, deceased individuals, and accuracy is paramount — the data must be
-sourced and factually verified from **official government records** (Ministry
-of Defence gallantry‑awards database, war‑memorial records), **not** filled in
-from an AI's general knowledge.
+The app ships the **Kargil (Operation Vijay, 1999) Roll of Honour** —
+**674 martyrs** in `data/martyrs.json`, parsed from the official Roll of Honour
+spreadsheet supplied by the campaign. These are real, sourced records
+(`is_placeholder: false`), so no "unverified" banner is shown.
 
-This repo therefore ships `data/martyrs.sample.json` with **unmistakable
-placeholders** (`Sample Martyr A (placeholder)`, `is_placeholder: true`,
-citations reading `PLACEHOLDER — replace with a verified…`). The UI renders a
-visible "unverified placeholder" banner on any such record. The `native_state`
-and `gallantry_award` values are generic taxonomy labels only, so the filters
-can be exercised — they make no factual claim about any individual.
+Mapping notes (per PRD §4.2, faithfulness matters):
 
-**To load the real dataset**, produce a JSON file with the same shape and run:
+- **`name`** is recorded verbatim from the Roll (rank prefix + person's name).
+  The gallantry‑award suffix (SM, VrC, MVC, VM, SC, PVC, NM) is parsed into
+  **`gallantry_award`** (e.g. `Sena Medal`, `Vir Chakra`).
+- **`regiment`** is the Unit; the regimental centre / station from the source is
+  noted in the **`citation`**.
+- **`native_state`, `age_at_martyrdom`, `date_of_martyrdom`** were not present in
+  the source and are left `null` rather than guessed.
+
+**To load an updated file** (same JSON shape), run:
 
 ```bash
-npm run seed data/martyrs.verified.json
+npm run seed data/martyrs.updated.json
 ```
-
-This remains a content workstream to be owned and completed before launch
-(PRD Open Question #3).
 
 ---
 
@@ -169,7 +167,7 @@ This remains a content workstream to be owned and completed before launch
 | §5.9 Search (writer / martyr name) | ✅ |
 | §5.10 Bilingual EN/HI toggle (mechanism; final copy separate) | ✅ mechanism |
 | §6 Accessibility, performance, resilience, moderation test coverage | ✅ |
-| §4.2 Martyr dataset | ⏳ schema + pipeline ready; **verified data pending** (content workstream) |
+| §4.2 Martyr dataset | ✅ Kargil Roll of Honour loaded (674 martyrs) |
 
 **Deliberately deferred** (P2 / separate deliverables): visual design polish &
 final copy (supplied separately per the PRD scope note), share‑as‑image,
@@ -224,6 +222,6 @@ src/
                   auth, rate-limit, validation, i18n) + *.test.ts
   app/            Next.js App Router: pages + /api route handlers
   components/     React client components
-data/             martyrs.sample.json (placeholder) + runtime SQLite (gitignored)
+data/             martyrs.json (Kargil Roll of Honour) + runtime SQLite (gitignored)
 scripts/seed.ts   CLI seeder
 ```

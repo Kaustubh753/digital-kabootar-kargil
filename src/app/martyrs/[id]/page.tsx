@@ -88,7 +88,7 @@ export default function MartyrProfilePage() {
             href={`/write?martyr=${encodeURIComponent(martyr.id)}`}
             className="btn btn-primary"
           >
-            🕊️ {t("directory.writeToThem")}
+            {t("directory.writeToThem")}
           </Link>
         </div>
       </div>

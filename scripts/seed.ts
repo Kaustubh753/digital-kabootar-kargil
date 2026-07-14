@@ -1,9 +1,9 @@
 /**
  * CLI seeder: `npm run seed [path/to/martyrs.json]`
  *
- * With no argument it loads data/martyrs.sample.json (PLACEHOLDER data). Point
- * it at the verified MoD dataset (same JSON shape) to load real records:
- *   npm run seed data/martyrs.verified.json
+ * With no argument it loads data/martyrs.json (the Kargil Roll of Honour). Point
+ * it at another file (same JSON shape) to load an updated dataset:
+ *   npm run seed data/martyrs.updated.json
  *
  * Idempotent — records are upserted by id, so re-running updates in place.
  */
@@ -11,7 +11,7 @@
 import { readFileSync } from "node:fs";
 import { openDb, withTransaction } from "../src/lib/db";
 import { upsertMartyr, countMartyrs, type MartyrInput } from "../src/lib/martyrs";
-import { loadSampleMartyrs } from "../src/lib/seed";
+import { loadSeedMartyrs } from "../src/lib/seed";
 import { config } from "../src/lib/config";
 
 function main() {
@@ -24,9 +24,9 @@ function main() {
     martyrs = parsed.martyrs ?? [];
     console.log(`Loading ${martyrs.length} martyrs from ${arg}`);
   } else {
-    martyrs = loadSampleMartyrs();
+    martyrs = loadSeedMartyrs();
     console.log(
-      `No file given — loading ${martyrs.length} PLACEHOLDER martyrs from the sample file.`,
+      `No file given — loading ${martyrs.length} martyrs from the Kargil Roll of Honour (data/martyrs.json).`,
     );
   }
 

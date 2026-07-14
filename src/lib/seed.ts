@@ -1,11 +1,9 @@
 /**
- * Seeds the martyrs table from data/martyrs.sample.json when it is empty.
- * Server-only.
+ * Seeds the martyrs table from data/martyrs.json when it is empty. Server-only.
  *
- * The sample file is PLACEHOLDER data (see its _README and PRD §4.2). In
- * production this seeding is a convenience for local/dev; the real, verified
- * dataset should be loaded via the same `upsertMartyr` path (e.g. `npm run
- * seed` pointed at the verified file).
+ * The dataset is the Kargil (Operation Vijay, 1999) Roll of Honour sourced from
+ * the official Roll of Honour spreadsheet. To load an updated/verified file, use
+ * the same `upsertMartyr` path (e.g. `npm run seed path/to/file.json`).
  */
 
 import { readFileSync } from "node:fs";
@@ -13,25 +11,24 @@ import { join } from "node:path";
 import { withTransaction, type DB } from "./db";
 import { countMartyrs, upsertMartyr, type MartyrInput } from "./martyrs";
 
-interface SampleFile {
+interface MartyrsFile {
   martyrs: MartyrInput[];
 }
 
-export function loadSampleMartyrs(): MartyrInput[] {
-  const path = join(process.cwd(), "data", "martyrs.sample.json");
-  const parsed = JSON.parse(readFileSync(path, "utf8")) as SampleFile;
+export function loadSeedMartyrs(): MartyrInput[] {
+  const path = join(process.cwd(), "data", "martyrs.json");
+  const parsed = JSON.parse(readFileSync(path, "utf8")) as MartyrsFile;
   return parsed.martyrs ?? [];
 }
 
-/** Insert placeholder martyrs only if none exist yet. Idempotent. */
+/** Insert the Roll of Honour martyrs only if none exist yet. Idempotent. */
 export function seedIfEmpty(db: DB): void {
   if (countMartyrs(db) > 0) return;
-  const martyrs = loadSampleMartyrs();
+  const martyrs = loadSeedMartyrs();
   withTransaction(db, () => {
     for (const m of martyrs) upsertMartyr(db, m);
   });
   console.warn(
-    `[seed] Inserted ${martyrs.length} PLACEHOLDER martyrs. Replace with ` +
-      `verified MoD data before launch (PRD §4.2).`,
+    `[seed] Inserted ${martyrs.length} martyrs from the Kargil Roll of Honour.`,
   );
 }

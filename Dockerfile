@@ -25,8 +25,8 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/next.config.mjs ./
-# Placeholder martyr seed data (read on first boot). The live DB lives on the
-# mounted volume via DATABASE_PATH, not here.
+# Martyr seed data (Kargil Roll of Honour), read on first boot. The live DB
+# lives on the mounted volume via DATABASE_PATH, not here.
 COPY --from=builder /app/data ./data
 
 EXPOSE 3000

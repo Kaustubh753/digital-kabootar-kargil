@@ -11,7 +11,7 @@ export function SiteFooter() {
       <div className="container stack" style={{ gap: 8 }}>
         <div className="row-between">
           <span>
-            🕊️ {t("app.name")} — {t("app.tagline")}
+            {t("app.name")} — {t("app.tagline")}
           </span>
           <Link href="/admin">{t("nav.admin")}</Link>
         </div>

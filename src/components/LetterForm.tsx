@@ -320,7 +320,7 @@ export function LetterForm({ martyr }: { martyr: Martyr }) {
         className="btn btn-primary"
         disabled={phase === "sending" || !consentOk}
       >
-        {phase === "sending" ? t("write.sending") : `🕊️ ${t("write.submit")}`}
+        {phase === "sending" ? t("write.sending") : t("write.submit")}
       </button>
 
       {/* Data-use line — Veer Vandan §2.5 */}

@@ -10,7 +10,6 @@ export function Nav() {
     <header className="site-header">
       <div className="container row">
         <Link href="/" className="brand">
-          <span aria-hidden>🕊️</span>
           {t("app.name")}
         </Link>
         <nav className="nav-links" aria-label="Primary">

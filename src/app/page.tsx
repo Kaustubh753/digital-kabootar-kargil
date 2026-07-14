@@ -15,7 +15,7 @@ export default function HomePage() {
         <p>{t("app.tagline")}</p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
           <Link href="/write" className="btn btn-primary">
-            🕊️ {t("home.writeCta")}
+            {t("home.writeCta")}
           </Link>
           <Link href="/martyrs" className="btn btn-ghost">
             {t("home.browse")}
