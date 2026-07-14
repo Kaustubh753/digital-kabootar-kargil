@@ -57,6 +57,31 @@ When it finishes, `fly open` opens your live URL —
 > nearest [Fly region](https://fly.io/docs/reference/regions/) if you prefer.
 > The `[[vm]]` block uses a small 512 MB machine — bump `memory_mb` if needed.
 
+### Auto-deploy on push (GitHub Actions → Fly.io)
+
+`.github/workflows/fly-deploy.yml` deploys to Fly on every push. Fly has no
+native GitHub integration, so this Action is what makes "push → live" work.
+
+One-time setup:
+
+```bash
+# 1. Runtime secrets the app needs to boot (it refuses to start without them):
+fly secrets set ADMIN_PASSWORD='choose-a-strong-password' \
+                SESSION_SECRET="$(openssl rand -hex 32)" -a digital-kabootar-kargil
+
+# 2. Persistent volume (only if you don't already have one) so letters survive:
+fly volumes list -a digital-kabootar-kargil   # check first
+fly volumes create kabootar_data -r bom -n 1 -s 1 -a digital-kabootar-kargil
+
+# 3. A deploy token for the Action:
+fly tokens create deploy -a digital-kabootar-kargil
+```
+
+Then add the token to GitHub → **Settings → Secrets and variables → Actions →
+New repository secret**, named **`FLY_API_TOKEN`**. After that, every push to
+the branch redeploys `digital-kabootar-kargil.fly.dev` automatically (watch the
+repo's **Actions** tab).
+
 ## Public URL — Option A: Render (free, all in the browser)
 
 Best if you just want a shareable link fast. (Free tier sleeps after ~15 min

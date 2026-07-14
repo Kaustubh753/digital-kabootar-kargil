@@ -1,0 +1,45 @@
+# Continuous deployment to Fly.io.
+# On every push to the branch, this builds and deploys to the `digital-kabootar-kargil`
+# app (name comes from fly.toml). Requires a repository secret named FLY_API_TOKEN.
+#   Generate: fly tokens create deploy -a digital-kabootar-kargil
+#   Add it:   GitHub repo → Settings → Secrets and variables → Actions → New repository secret
+name: Deploy to Fly.io
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - claude/kargil-tribute-letters-jw7cgs
+  workflow_dispatch: {}
+
+# Never run two deploys of the same ref at once.
+concurrency:
+  group: fly-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    env:
+      FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ensure FLY_API_TOKEN is configured
+        run: |
+          if [ -z "$FLY_API_TOKEN" ]; then
+            echo "::error::FLY_API_TOKEN secret is not set — cannot deploy."
+            echo "1) Generate one:  fly tokens create deploy -a digital-kabootar-kargil"
+            echo "2) Add it in GitHub → Settings → Secrets and variables → Actions"
+            echo "   as a repository secret named FLY_API_TOKEN, then re-run this workflow."
+            exit 1
+          fi
+
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only
