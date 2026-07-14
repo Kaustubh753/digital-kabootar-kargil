@@ -200,8 +200,17 @@ count, stats, CSV, rate‑limit 429).
 
 ## Security notes
 
+- The admin dashboard (`/admin`) is auth‑gated: a server‑side guard redirects
+  unauthenticated requests to the login, and every `/api/admin/*` route returns
+  401 without a valid session. The login page itself is public (as it must be).
+- **Fail‑closed config:** the app **refuses to start in production** if
+  `ADMIN_PASSWORD` or `SESSION_SECRET` are still the dev defaults
+  (`src/instrumentation.ts` → `assertSecureConfig`). This prevents a deployment
+  from shipping a guessable password or a forgeable session cookie (a public
+  HMAC key would let anyone mint an admin cookie). Set both before deploying.
 - Admin session cookie is HMAC‑signed, HttpOnly, and `Secure` in production
-  (so it is HTTPS‑only — serve the app over TLS).
+  (so it is HTTPS‑only — serve the app over TLS). Login is per‑IP rate‑limited
+  and the password compare is constant‑time.
 - Only a **keyed hash** of the submitter IP is stored, never the raw address.
 - All SQL uses parameterised queries; `LIKE` inputs are wildcard‑escaped.
 - CSV export neutralises spreadsheet formula injection.
