@@ -1,0 +1,43 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# typescript incremental build cache
+*.tsbuildinfo
+
+# production
+/build
+
+# local database (seeded at runtime; never commit real data here)
+/data/*.db
+/data/*.db-journal
+/data/*.db-wal
+/data/*.db-shm
+
+# testing
+/coverage
+
+# misc
+.DS_Store
+*.pem
+
+# env files (never commit secrets)
+.env
+.env*.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea
