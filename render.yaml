@@ -1,0 +1,25 @@
+# Render Blueprint — one-click deploy for a live public URL.
+# In Render: New → Blueprint → connect this repo → Apply. See DEPLOY.md.
+#
+# Node 22+ is required (the app uses the built-in node:sqlite module).
+services:
+  - type: web
+    name: digital-kabootar-kargil
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Random per-deploy secret used to sign admin sessions. Leave generated.
+      - key: SESSION_SECRET
+        generateValue: true
+      # Random admin password. After deploy, read it in the Render dashboard
+      # (Environment tab) to log in at /admin.
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      # false = auto-approve clean letters; set "true" to hold everything for review.
+      - key: REQUIRE_HUMAN_REVIEW
+        value: "false"
