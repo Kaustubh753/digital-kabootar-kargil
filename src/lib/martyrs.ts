@@ -136,7 +136,9 @@ export function listStates(db: DB): string[] {
 
 function clampLimit(limit: number | undefined, fallback: number): number {
   if (!Number.isFinite(limit) || (limit ?? 0) <= 0) return fallback;
-  return Math.min(Math.floor(limit as number), 200);
+  // Upper bound covers the full Roll of Honour (674) so the directory can list
+  // every martyr in one request; the picker still passes a small limit.
+  return Math.min(Math.floor(limit as number), 1000);
 }
 
 /** Escape LIKE wildcards in user input so `%` / `_` are treated literally. */

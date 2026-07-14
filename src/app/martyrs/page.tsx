@@ -27,7 +27,7 @@ export default function DirectoryPage() {
     const p = new URLSearchParams();
     if (debouncedQ.trim()) p.set("q", debouncedQ.trim());
     if (state) p.set("state", state);
-    p.set("limit", "200");
+    p.set("limit", "1000"); // list the entire Roll of Honour
     fetchJson<{ items: Martyr[]; states: string[] }>(
       `/api/martyrs?${p.toString()}`,
     )
